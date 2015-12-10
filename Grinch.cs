@@ -29,8 +29,6 @@ public class Grinch : AIBase
     private float last_x = 0, last_z = 0;
     private int use_thor = 0;
     private float birth_x, birth_z;
-    private float timer;
-    private int i = 0;
     private bool hit_miss_flag = false;
     protected override void Act(JObject state)
     {
@@ -59,20 +57,13 @@ public class Grinch : AIBase
         }
         if ((float)me["hp"] <= 60 && tar_hp != null)  //lack hp and pick hp if has
         {
-            if (i == 0)
-                timer = time;
-            if (time - timer > 5)
-            {
-                last_x = 0;
-                last_z = 0;
-                i = 0;
-            }
             Pick_Hp(me, tar_hp);
+            goto HAHA;
         }
         if (Distance(me, meteorite) <= 10 * 10)    // escape from the meteorite
         {
             Escape_Meteorite(meteorite, me);
-            goto HAHA;
+            //goto HAHA;
         }
 
         if (missile == null)
@@ -93,8 +84,9 @@ public class Grinch : AIBase
             Escape_Stray(stray_miss, me, enemies);
             goto HAHA;
         }
-        if ((me_pos_x != last_x || me_pos_z != last_z) && last_x != 0 && last_z != 0)
+        /*if ((me_pos_x != last_x || me_pos_z != last_z) && last_x != 0 && last_z != 0)
             goto HAHA;
+         */
         if (use_thor == 0 && time > 0.1)  //Initiate befroe hit the first enemy with skill 1 which means the fight has enter into a new stage
         {
             Init(me, enemies, barrels, pickup);
@@ -242,7 +234,7 @@ public class Grinch : AIBase
         float miss_tar_x = float.Parse(miss_target["pos"]["x"].ToString());
         float miss_tar_z = float.Parse(miss_target["pos"]["z"].ToString());
 
-        if (stray_mis_speed == 0 && Distance(me, stray_miss) <= 8.5 * 8.5)
+        if (stray_mis_speed == 0 && Distance(me, stray_miss) <= 5 *5)
         {
             float vec_x = stray_mis_x - me_x;
             float vec_z = stray_mis_z - me_z;
@@ -273,21 +265,17 @@ public class Grinch : AIBase
 
     private void Pick_Hp(JToken me, JToken hp)
     {    
-        var me_x = float.Parse(me["pos"]["x"].ToString());
-        var me_z = float.Parse(me["pos"]["z"].ToString());
         if (int.Parse(me["skills"][0].ToString()) == 0)
             UseSkill(0);
         UseSkill(0);
         var x = float.Parse(hp["pos"]["x"].ToString());
         var z = float.Parse(hp["pos"]["z"].ToString());
         last_x = x; last_z = z;
-        Move(last_x, last_z);
-        i++;
+        Move( last_x,  last_z);
         if (Distance(me, last_x, last_z) <= 0.5 )
         {
             last_x = 0;
             last_z = 0;
-            i = 0;
         }
 
     }
@@ -397,6 +385,7 @@ public class Grinch : AIBase
 
     private void Avoid(JToken me, JEnumerable<JToken> target)
     {
+        
         float me_vel_x = float.Parse(me["vel"]["x"].ToString());
         float me_vel_z = float.Parse(me["vel"]["z"].ToString());
         float tar_x = float.Parse(target["pos"]["x"].ToString());
