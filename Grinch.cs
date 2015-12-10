@@ -63,7 +63,7 @@ public class Grinch : AIBase
         if (Distance(me, meteorite) <= 10 * 10)    // escape from the meteorite
         {
             Escape_Meteorite(meteorite, me);
-            //goto HAHA;
+            goto HAHA;
         }
 
         if (missile == null)
